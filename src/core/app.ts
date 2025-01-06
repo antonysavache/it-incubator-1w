@@ -7,4 +7,4 @@ export const app = express();
 
 app.use(express.json());
 
-app.use(SETTINGS.PATH.VIDEOS, videoRouter);
+app.use('/videos', videoRouter);

@@ -99,3 +99,4 @@ videoRouter.post('', videoController.createVideo);
 videoRouter.put('/:id', videoController.updateVideo);
 videoRouter.delete('', videoController.deleteVideos);
 videoRouter.delete('/:id', videoController.deleteVideo);
+videoRouter.delete('testing/all-data', videoController.deleteVideos);
