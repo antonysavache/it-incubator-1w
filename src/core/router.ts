@@ -93,10 +93,10 @@ export const videoController = {
     }
 }
 
-videoRouter.get('', videoController.getVideos);           // убрали SETTINGS.PATH.ROOT
-videoRouter.get('/:id', videoController.getVideo);        // убрали SETTINGS.PATH.ROOT_ENTITY
+videoRouter.get('', videoController.getVideos);
+videoRouter.get('/:id', videoController.getVideo);
 videoRouter.post('', videoController.createVideo);
 videoRouter.put('/:id', videoController.updateVideo);
 videoRouter.delete('', videoController.deleteVideos);
 videoRouter.delete('/:id', videoController.deleteVideo);
-videoRouter.delete('testing/all-data', videoController.deleteVideos);
+videoRouter.delete('/testing/all-data', videoController.deleteVideos);
