@@ -43,8 +43,18 @@ export const videoController = {
 
     updateVideo(req, res) {
         const id = +req.params.id;
-        const errors = {errorsMessages: []};
 
+        const video = db.videos.find(video => video.id === id);
+        if (!video) {
+            return res.status(404).json({
+                errorsMessages: [{
+                    message: "Video not found",
+                    field: "id"
+                }]
+            });
+        }
+
+        const errors = {errorsMessages: []};
         UpdateVideoValidator.validate(req.body, id, errors);
 
         if (errors.errorsMessages.length) {
@@ -52,7 +62,6 @@ export const videoController = {
             return
         }
 
-        const video = db.videos.find(video => video.id === id);
         Object.assign(video, req.body);
         res.status(204).end();
     },
@@ -97,9 +106,8 @@ export const videoController = {
 
 videoRouter.delete('/testing/all-data', videoController.deleteVideos);
 videoRouter.get('/', videoController.getVideos);
-videoRouter.get('/:id', videoController.getVideo);
 videoRouter.post('/', videoController.createVideo);
+videoRouter.get('/:id', videoController.getVideo);
 videoRouter.put('/:id', videoController.updateVideo);
-videoRouter.delete('/', videoController.deleteVideos);
 videoRouter.delete('/:id', videoController.deleteVideo);
 
