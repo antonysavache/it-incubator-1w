@@ -104,7 +104,10 @@ export const videoController = {
     }
 }
 
+// Testing route should be the first one to avoid conflicts
 videoRouter.delete('/testing/all-data', videoController.deleteVideos);
+
+// Regular routes
 videoRouter.get('/', videoController.getVideos);
 videoRouter.post('/', videoController.createVideo);
 videoRouter.get('/:id', videoController.getVideo);
