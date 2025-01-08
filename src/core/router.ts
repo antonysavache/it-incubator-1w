@@ -21,11 +21,15 @@ export const videoController = {
             return;
         }
 
-        const createdAt = new Date().toISOString();
-        const publicationDate = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString();
+        const now = new Date();
+        const createdAt = now.toISOString();
+
+        const nextDay = new Date(now);
+        nextDay.setDate(nextDay.getDate() + 1);
+        const publicationDate = nextDay.toISOString();
 
         const newVideo = {
-            id: +(new Date()),
+            id: +now,
             title: req.body.title,
             author: req.body.author,
             canBeDownloaded: false,

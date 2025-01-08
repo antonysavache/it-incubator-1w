@@ -24,6 +24,13 @@ export class CreateVideoValidator {
             });
         }
 
+        if (body.title && body.title.length > 40) {
+            errors.errorsMessages.push({
+                message: "title limit",
+                field: "title"
+            });
+        }
+
         if (!body.availableResolutions || !Array.isArray(body.availableResolutions) || body.availableResolutions.length === 0) {
             errors.errorsMessages.push({
                 message: "At least one resolution required",

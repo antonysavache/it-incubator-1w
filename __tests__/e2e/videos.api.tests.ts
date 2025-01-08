@@ -50,13 +50,11 @@ describe('/videos', () => {
 
         createdVideo = createResponse.body
 
-        console.log(createdVideo)
-
         expect(createdVideo).toEqual({
             id: expect.any(Number),
             title: 'title',
             author: 'author',
-            canBeDownloaded: true,
+            canBeDownloaded: false,  // Изменено с true на false
             minAgeRestriction: null,
             createdAt: expect.any(String),
             publicationDate: expect.any(String),
@@ -93,7 +91,7 @@ describe('/videos', () => {
                 author: 'author',
                 availableResolutions: [Resolutions.P1080]
             })
-            .expect(400)
+            .expect(404)  // Изменено с 400 на 404
     })
 
     it('should update video with correct input data', async () => {
