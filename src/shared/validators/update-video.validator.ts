@@ -2,8 +2,24 @@ import {ErrorsMessages} from "../entities/db";
 
 export class UpdateVideoValidator {
     static validate(body: any, id: number, errors: ErrorsMessages) {
-        // Проверка title на null или пустую строку
-        if (!body.title) {
+        if (body.author && body.author.length > 20) {
+            errors.errorsMessages.push({
+                message: "maxLength: 20",
+                field: "author"
+            });
+        }
+
+        if (body.publicationDate !== undefined) {
+            const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+            if (typeof body.publicationDate !== 'string' || !dateRegex.test(body.publicationDate)) {
+                errors.errorsMessages.push({
+                    message: "Invalid publication date format. Use ISO string",
+                    field: "publicationDate"
+                });
+            }
+        }
+
+        if (!body.title || body.title === null) {
             errors.errorsMessages.push({
                 message: "title is required",
                 field: "title"
@@ -15,7 +31,6 @@ export class UpdateVideoValidator {
             });
         }
 
-        // Проверка типа canBeDownloaded
         if (body.canBeDownloaded !== undefined && typeof body.canBeDownloaded !== 'boolean') {
             errors.errorsMessages.push({
                 message: "canBeDownloaded must be boolean",
@@ -23,15 +38,6 @@ export class UpdateVideoValidator {
             });
         }
 
-        // Проверка author (если предоставлен)
-        if (body.author && body.author.length > 20) {
-            errors.errorsMessages.push({
-                message: "maxLength: 20",
-                field: "author"
-            });
-        }
-
-        // Проверка minAgeRestriction
         if (body.minAgeRestriction !== null &&
             (typeof body.minAgeRestriction !== 'number' ||
                 body.minAgeRestriction < 1 ||
