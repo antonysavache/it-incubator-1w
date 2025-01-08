@@ -1,11 +1,11 @@
-import {db} from "../shared/db/db";
-import {SETTINGS} from "../shared/settings";
-import {CreateVideoValidator} from "../shared/validators/create-video.validator";
-import {UpdateVideoValidator} from "../shared/validators/update-video.validator";
-import {DeleteVideoValidator} from "../shared/validators/delete-video.validator";
 import {Router} from "express";
+import {CreateVideoValidator} from "../shared/validators/create-video.validator";
+import {db} from "../shared/db/db";
+import {UpdateVideoValidator} from "../shared/validators/update-video.validator";
 
-export const videoRouter = Router();
+export const videoRouter = Router({});
+
+
 
 export const videoController = {
     getVideos(req, res) {
@@ -18,52 +18,51 @@ export const videoController = {
 
         if (errors.errorsMessages.length) {
             res.status(400).json(errors);
-
-            return
+            return;
         }
 
         const createdAt = new Date().toISOString();
         const publicationDate = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString();
 
-        const newVideos = {
-            id: Date.now(),
+        const newVideo = {
+            id: +(new Date()),
             title: req.body.title,
             author: req.body.author,
             canBeDownloaded: false,
             minAgeRestriction: null,
             createdAt: createdAt,
             publicationDate: publicationDate,
-            availableResolutions: req.body.availableResolutions,
+            availableResolutions: req.body.availableResolutions
         }
 
-        db.videos.push(newVideos)
-
-        res.status(201).json(newVideos);
+        db.videos.push(newVideo);
+        res.status(201).json(newVideo);
     },
 
     updateVideo(req, res) {
         const id = +req.params.id;
+        const video = db.videos.find(v => v.id === id);
 
-        const video = db.videos.find(video => video.id === id);
         if (!video) {
-            return res.status(404).json({
+            res.status(404).json({
                 errorsMessages: [{
                     message: "Video not found",
                     field: "id"
                 }]
             });
+            return;
         }
 
         const errors = {errorsMessages: []};
         UpdateVideoValidator.validate(req.body, id, errors);
 
         if (errors.errorsMessages.length) {
-            res.status(400).json(errors)
-            return
+            res.status(400).json(errors);
+            return;
         }
 
         Object.assign(video, req.body);
-        res.status(204).end();
+        res.sendStatus(204);
     },
 
     getVideo(req, res) {
@@ -71,12 +70,13 @@ export const videoController = {
         const video = db.videos.find(v => v.id === id);
 
         if (!video) {
-            return res.status(404).json({
+            res.status(404).json({
                 errorsMessages: [{
                     message: "Video not found",
                     field: "id"
                 }]
             });
+            return;
         }
 
         res.status(200).json(video);
@@ -84,31 +84,31 @@ export const videoController = {
 
     deleteVideos(req, res) {
         db.videos = [];
-
-        res.status(204).end()
+        res.sendStatus(204);
     },
 
     deleteVideo(req, res) {
-        const errors = {errorsMessages: []};
         const id = +req.params.id;
+        const video = db.videos.find(v => v.id === id);
 
-        DeleteVideoValidator.validate(id, errors);
-
-        if (errors.errorsMessages.length) {
-            res.status(404).json(errors); //
-            return
+        if (!video) {
+            res.status(404).json({
+                errorsMessages: [{
+                    message: "Video not found",
+                    field: "id"
+                }]
+            });
+            return;
         }
 
-        db.videos = db.videos.filter(video => video.id !== id);
-        res.status(204).end();
+        db.videos = db.videos.filter(v => v.id !== id);
+        res.sendStatus(204);
     }
-}
+};
 
-
-// Regular routes
 videoRouter.get('/', videoController.getVideos);
-videoRouter.post('/', videoController.createVideo);
 videoRouter.get('/:id', videoController.getVideo);
+videoRouter.post('/', videoController.createVideo);
 videoRouter.put('/:id', videoController.updateVideo);
+videoRouter.delete('/', videoController.deleteVideos);
 videoRouter.delete('/:id', videoController.deleteVideo);
-

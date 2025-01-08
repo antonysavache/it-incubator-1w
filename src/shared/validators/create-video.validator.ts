@@ -1,19 +1,36 @@
-import {ErrorsMessages, InputVideoType} from "../entities/db";
-import {VideoValidator} from "./video.validator";
+import {ErrorsMessages} from "../entities/db";
 
 export class CreateVideoValidator {
-    static validate(body: InputVideoType, errors: ErrorsMessages) {
-        if (!body?.title) {
+    static validate(body: any, errors: ErrorsMessages) {
+        if (!body) {
             errors.errorsMessages.push({
-                message: "title is required",
-                field: "title"
+                message: "body is required",
+                field: "body"
             });
             return errors;
         }
 
-        VideoValidator.validateVideoTitle(body?.title.trim(), errors);
-        VideoValidator.validateVideoAuthor(body?.author.trim(), errors);
-        VideoValidator.validateResolutions(body?.availableResolutions, errors);
+        if (body.author && body.author.length > 20) {
+            errors.errorsMessages.push({
+                message: "maxLength: 20",
+                field: "author"
+            });
+        }
+
+        if (!body.title) {
+            errors.errorsMessages.push({
+                message: "title is required",
+                field: "title"
+            });
+        }
+
+        if (!body.availableResolutions || !Array.isArray(body.availableResolutions) || body.availableResolutions.length === 0) {
+            errors.errorsMessages.push({
+                message: "At least one resolution required",
+                field: "availableResolutions"
+            });
+        }
+
         return errors;
     }
 }

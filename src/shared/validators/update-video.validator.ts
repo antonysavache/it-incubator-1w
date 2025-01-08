@@ -1,9 +1,15 @@
-import {ErrorsMessages, OutputVideoType} from "../entities/db";
-import {VideoValidator} from "./video.validator";
+import {ErrorsMessages} from "../entities/db";
 
 export class UpdateVideoValidator {
     static validate(body: any, id: number, errors: ErrorsMessages) {
-        if (!body?.title) {
+        if (body.author && body.author.length > 20) {
+            errors.errorsMessages.push({
+                message: "maxLength: 20",
+                field: "author"
+            });
+        }
+
+        if (!body.title) {
             errors.errorsMessages.push({
                 message: "title is required",
                 field: "title"
@@ -17,9 +23,12 @@ export class UpdateVideoValidator {
             });
         }
 
-        VideoValidator.validateVideoTitle(body?.title, errors);
-        VideoValidator.validateVideoAuthor(body?.author, errors);
-        VideoValidator.validateResolutions(body?.availableResolutions, errors);
+        if (body.minAgeRestriction !== null && (body.minAgeRestriction < 1 || body.minAgeRestriction > 18)) {
+            errors.errorsMessages.push({
+                message: "minAgeRestriction should be between 1 and 18",
+                field: "minAgeRestriction"
+            });
+        }
 
         return errors;
     }
