@@ -1,4 +1,4 @@
-import {ErrorsMessages} from "../entities/db";
+import {ErrorsMessages, Resolutions} from "../entities/db";
 
 export class CreateVideoValidator {
     static validate(body: any, errors: ErrorsMessages) {
@@ -34,6 +34,11 @@ export class CreateVideoValidator {
         if (!body.availableResolutions || !Array.isArray(body.availableResolutions) || body.availableResolutions.length === 0) {
             errors.errorsMessages.push({
                 message: "At least one resolution required",
+                field: "availableResolutions"
+            });
+        } else if (body.availableResolutions.find(res => !Object.values(Resolutions).includes(res))) {
+            errors.errorsMessages.push({
+                message: "wrong resolution",
                 field: "availableResolutions"
             });
         }
