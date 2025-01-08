@@ -1,9 +1,9 @@
-import {Router} from "express";
 import {db} from "../shared/db/db";
 import {SETTINGS} from "../shared/settings";
 import {CreateVideoValidator} from "../shared/validators/create-video.validator";
 import {UpdateVideoValidator} from "../shared/validators/update-video.validator";
 import {DeleteVideoValidator} from "../shared/validators/delete-video.validator";
+import {Router} from "express";
 
 export const videoRouter = Router();
 
@@ -22,15 +22,17 @@ export const videoController = {
             return
         }
 
+        const createdAt = new Date().toISOString();
+        const publicationDate = new Date(new Date().setDate(new Date().getDate() + 1)).toISOString();
 
         const newVideos = {
             id: Date.now(),
             title: req.body.title,
             author: req.body.author,
-            canBeDownloaded: true,
+            canBeDownloaded: false,
             minAgeRestriction: null,
-            createdAt: new Date().toISOString(),
-            publicationDate: new Date().toISOString(),
+            createdAt: createdAt,
+            publicationDate: publicationDate,
             availableResolutions: req.body.availableResolutions,
         }
 
@@ -93,10 +95,11 @@ export const videoController = {
     }
 }
 
+videoRouter.delete('/testing/all-data', videoController.deleteVideos);
 videoRouter.get('/', videoController.getVideos);
 videoRouter.get('/:id', videoController.getVideo);
 videoRouter.post('/', videoController.createVideo);
 videoRouter.put('/:id', videoController.updateVideo);
 videoRouter.delete('/', videoController.deleteVideos);
 videoRouter.delete('/:id', videoController.deleteVideo);
-videoRouter.delete('/testing/all-data', videoController.deleteVideos);
+

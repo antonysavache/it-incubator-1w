@@ -3,6 +3,13 @@ import {ErrorsMessages, Resolutions} from "../entities/db";
 
 export class VideoValidator extends BaseValidator {
     static validateVideoTitle(title: string, errors: ErrorsMessages) {
+        if (!title) {
+            errors.errorsMessages.push({
+                message: "title is required",
+                field: "title"
+            });
+            return;
+        }
         this.validateLength(title, 'title', 1, 40, errors);
     }
 
